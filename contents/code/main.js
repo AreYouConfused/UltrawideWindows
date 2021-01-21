@@ -16,7 +16,24 @@ function newSlotPosition(workspace, client, numberXslots, numberYslots, x, y, xS
 
     var newX = maxArea.x + width * x;
     var newY = maxArea.y + height * y;
-    return [newX, newY, width * xSlotToFill, height * ySlotToFill]
+
+    // hacky code to stop the windows from hangin off the edge of the screen, into the next screen over
+    var finalWidth = width * xSlotToFill;
+    if (((newX + finalWidth) > maxArea.width) && (numberXslots == (x + xSlotToFill))){
+        switch(numberXslots){
+            case(6):
+                finalWidth -= 4;
+                break;
+            case(3):
+                finalWidth -= 1;
+                break;
+            default:
+                break;
+        }
+        
+    } 
+
+    return [newX, newY, finalWidth, height * ySlotToFill]
 }
 function reposition(client, newX, newY, w, h) {
     client.geometry = {
