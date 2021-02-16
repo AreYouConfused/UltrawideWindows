@@ -80,6 +80,33 @@ function center(workspace) {
 //     return false;
 // }
 
+// GRID 1x3
+registerShortcut("MoveWindowToUp1x3", "UltrawideWindows: Move Window to up (1x3)", "", function () {
+    move(workspace, 1, 3, 0, 0, 1, 1)
+});
+
+registerShortcut("MoveWindowToCenter1x3", "UltrawideWindows: Move Window to center (1x3)", "", function () {
+    move(workspace, 1, 3, 0, 1, 1, 1)
+});
+
+registerShortcut("MoveWindowToDown1x3", "UltrawideWindows: Move Window to down (1x3)", "", function () {
+    move(workspace, 1, 3, 0, 2, 1, 1)
+});
+
+registerShortcut("MoveWindowToUpThird1x3", "UltrawideWindows: Move Window to up Third (1x3)", "", function () {
+    move(workspace, 1, 3, 0, 0, 1, 2)
+});
+
+registerShortcut("MoveWindowToCenterThird1x3", "UltrawideWindows: Move Window to center Third (1x3)", "", function () {
+    move(workspace, 1, 6, 0, 1, 1, 4)
+});
+
+registerShortcut("MoveWindowToDownThird1x3", "UltrawideWindows: Move Window to down Third (1x3)", "", function () {
+    move(workspace, 1, 3, 0, 1, 1, 2)
+});
+
+
+
 // GRID 3x2
 registerShortcut("MoveWindowToUpLeft3x2", "UltrawideWindows: Move Window to up-left (3x2)", "Meta+Num+7", function () {
     move(workspace, 3, 2, 0, 0, 1, 1)
