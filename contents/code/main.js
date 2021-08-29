@@ -1,52 +1,29 @@
 function newSlotPosition(workspace, client, numberXslots, numberYslots, x, y, xSlotToFill, ySlotToFill) {
     var maxArea = workspace.clientArea(KWin.MaximizeArea, client);
-    var width;
-    if (x == numberXslots) {
-        width = Math.floor(maxArea.width / numberXslots);
-    } else {
-        width = Math.ceil(maxArea.width / numberXslots);
-    }
 
-    var height;
-    if (y == numberYslots) {
-        height = Math.floor(maxArea.height / numberYslots);
-    } else {
-        height = Math.ceil(maxArea.height / numberYslots);
-    }
+    var newX = maxArea.x + Math.round(maxArea.width / numberXslots * x);
+    var newY = maxArea.y + Math.round(maxArea.height / numberYslots * y);
 
-    var newX = maxArea.x + width * x;
-    var newY = maxArea.y + height * y;
+    // Width and height is calculated by finding where the window should end and subtracting where it should start
+    var clientWidth = Math.round(maxArea.width / numberXslots * (x + xSlotToFill)) - (newX - maxArea.x);
+    var clientHeight = Math.round(maxArea.height / numberYslots * (y + ySlotToFill)) - (newY - maxArea.y);
 
-    // hacky code to stop the windows from hangin off the edge of the screen, into the next screen over
-    var finalWidth = width * xSlotToFill;
-    if (((newX + finalWidth) > maxArea.width) && (numberXslots == (x + xSlotToFill))){
-        switch(numberXslots){
-            case(6):
-                finalWidth -= 4;
-                break;
-            case(3):
-                finalWidth -= 1;
-                break;
-            default:
-                break;
-        }
-        
-    } 
-
-    return [newX, newY, finalWidth, height * ySlotToFill]
+    return [newX, newY, clientWidth, clientHeight]
 }
+
 function reposition(client, newX, newY, w, h) {
-    client.geometry = {
+    client.frameGeometry = {
         x: newX,
         y: newY,
         width: w,
         height: h
-    };
+    }
 }
 
 function move(workspace, numberXslots, numberYslots, x, y, xSlotToFill, ySlotToFill) {
     var client = workspace.activeClient;
-    if (client.moveable) {
+    if (client.moveable && client.resizeable) {
+        client.setMaximize(false,false);
         arr = newSlotPosition(workspace, client, numberXslots, numberYslots, x, y, xSlotToFill, ySlotToFill);
         var newX = arr[0],
             newY = arr[1],
@@ -60,12 +37,11 @@ function center(workspace) {
     var client = workspace.activeClient;
     if (client.moveable) {
         var maxArea = workspace.clientArea(KWin.MaximizeArea, client);
-        var newX = maxArea.x + ((maxArea.width - client.width) / 2);
-        var newY = maxArea.y + ((maxArea.height - client.height) / 2);
+        var newX = Math.round(maxArea.x + ((maxArea.width - client.width) / 2));
+        var newY = Math.round(maxArea.y + ((maxArea.height - client.height) / 2));
         reposition(client, newX, newY, client.width, client.height)
     }
 }
-
 
 // function isInPosition(workspace, numberXslots, numberYslots, x, y, xSlotToFill, ySlotToFill) {
 //     var client = workspace.activeClient;
@@ -208,8 +184,16 @@ registerShortcut("MoveWindowToLeftHeight4x2_centerbiased", "UltrawideWindows: Mo
     move(workspace, 4, 1, 0, 0, 1, 1)
 });
 
+registerShortcut("MoveWindowToCenterLeftHeight4x2_centerbiased", "UltrawideWindows: Move Window to center-left-height (4x2 center biased)", "Ctrl+Meta+Shift+Num+4", function () {
+    move(workspace, 4, 1, 1, 0, 1, 1)
+});
+
 registerShortcut("MoveWindowToCenterHeight4x2_centerbiased", "UltrawideWindows: Move Window to center-height (4x2 center biased)", "Ctrl+Meta+Num+5", function () {
     move(workspace, 4, 1, 1, 0, 2, 1)
+});
+
+registerShortcut("MoveWindowToCenterRightHeight4x2_centerbiased", "UltrawideWindows: Move Window to center-right-height (4x2 center biased)", "Ctrl+Meta+Shift+Num+6", function () {
+    move(workspace, 4, 1, 2, 0, 1, 1)
 });
 
 registerShortcut("MoveWindowToRightHeight4x2_centerbiased", "UltrawideWindows: Move Window to right-height (4x2 center biased)", "Ctrl+Meta+Num+6", function () {
@@ -290,7 +274,8 @@ registerShortcut("MoveWindowToRightHeight23_center_biased", "UltrawideWindows: M
 
 // General
 registerShortcut("MoveWindowToMaximize", "UltrawideWindows: Maximize Window", "Meta+Num+0", function () {
-    move(workspace, 1, 1, 0, 0, 1, 1)
+    var client = workspace.activeClient;
+    client.setMaximize(true,true)
 });
 
 registerShortcut("MoveWindowToMaximize1", "UltrawideWindows: Maximize Window (copy)", "alt+Num+0", function () {
